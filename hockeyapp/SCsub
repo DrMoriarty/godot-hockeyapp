@@ -1,3 +1,23 @@
+#!/usr/bin/env python
 
 Import('env')
+Import('env_modules')
 
+env_hockeyapp = env_modules.Clone()
+
+#obj = env_hockeyapp.SharedObject('android/java_interface.cpp')
+env_hockeyapp.add_source_files(env.modules_sources, ['android/cpp/exception_handler.cpp'])
+env_hockeyapp.Append(CPPPATH=["#modules/hockeyapp/android/cpp/"])
+#env.Append(LIBS=[obj])
+#env.Prepend(LINKFLAGS=['-rdynamic'])
+
+if env['android_arch'] == 'armv6':
+    env.Prepend(LIBS=[File("android/libs/armeabi/libbreakpad_client.a")])
+elif env['android_arch'] == 'armv7':
+    env.Prepend(LIBS=[File("android/libs/armeabi-v7a/libbreakpad_client.a")])
+elif env['android_arch'] == 'x86':
+    env.Prepend(LIBS=[File("android/libs/x86/libbreakpad_client.a")])
+else:
+    print 'WARN: Architecture not suitable for breakpad module'
+
+#env.Append(LIBS=['stdc++'])
